@@ -1,0 +1,2 @@
+python trainInceptionV3.py
+pause

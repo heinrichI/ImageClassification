@@ -3,7 +3,10 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 
-train_path='Test'
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+train_path='train'
 
 image_size = 160 # All images will be resized to 160x160
 batch_size = 32
@@ -38,7 +41,7 @@ validation_generator = train_datagen.flow_from_directory(
                 subset='validation')
 
 
-model = tf.keras.models.load_model('Test.h5')
+model = tf.keras.models.load_model('image_classification.h5')
 
 """### Train the model
 
@@ -47,7 +50,7 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 40
+epochs = 10
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 
@@ -59,7 +62,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("Test_continue.h5")
+model.save("image_classification_continue.h5")
 print("Saved model to disk")
 
 """### Learning curves

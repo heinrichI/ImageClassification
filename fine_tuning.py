@@ -4,7 +4,10 @@ from tensorflow import keras
 import matplotlib.pyplot as plt
 import numpy as np
 
-train_path='training_data'
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+train_path='train'
 
 image_size = 160 # All images will be resized to 160x160
 batch_size = 32
