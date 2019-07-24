@@ -73,16 +73,16 @@ Additionally, the reasoning behind fine-tuning the top layers of the pre-trained
 All we need to do is unfreeze the `base_model`, and set the bottom layers be un-trainable. Then, recompile the model (necessary for these changes to take effect), and resume training.
 """
 
-#base_model.trainable = True
+model.layers[0].trainable = True
 
 # Let's take a look to see how many layers are in the base model
 #print("Number of layers in the base model: ", len(base_model.layers))
 
 # Fine tune from this layer onwards
 fine_tune_at = 100
-
+  
 # Freeze all the layers before the `fine_tune_at` layer
-for layer in model.layers[:fine_tune_at]:
+for layer in model.layers[0].layers[:fine_tune_at]:
   layer.trainable =  False
 
 """### Compile the model
@@ -129,11 +129,11 @@ If you train to convergence (`epochs=50`) the resulting graph should look like t
 ![After fine tuning the model nearly reaches 98% accuracy](./images/fine_tuning.png)
 """
 
-acc += history_fine.history['acc']
-val_acc += history_fine.history['val_acc']
+acc = history_fine.history['acc']
+val_acc = history_fine.history['val_acc']
 
-loss += history_fine.history['loss']
-val_loss += history_fine.history['val_loss']
+loss = history_fine.history['loss']
+val_loss = history_fine.history['val_loss']
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
