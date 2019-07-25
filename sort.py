@@ -29,6 +29,8 @@ all_image_paths = glob.glob(path)
 
 
 
+
+
 """## Build a `tf.data.Dataset`
 
 ### A dataset of images
@@ -64,6 +66,9 @@ def load_and_preprocess_image(path):
 AUTOTUNE = tf.data.experimental.AUTOTUNE
 image_ds = path_ds.map(load_and_preprocess_image, num_parallel_calls=AUTOTUNE)
 
+test_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+m=test_datagen.flow(image_ds, batch_size=32)
+y_pred=model.predict_generator(m, 32)
 
 predictions = model.predict(image_ds)
 
