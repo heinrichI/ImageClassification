@@ -121,3 +121,5 @@ venv.bak/
 /*.bak
 /train
 /train_webp
+/Train_Latex_Рисованное/*.h5
+/Train_Latex_Рисованное/*.md5

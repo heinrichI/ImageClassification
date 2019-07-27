@@ -4,6 +4,11 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 
+from keras.applications.nasnet import NASNetLarge
+from keras.preprocessing import image
+from keras.models import Model
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras import backend as K
 
 #from tensorflow.python.client import device_lib 
 #print(device_lib.list_local_devices())
@@ -50,7 +55,7 @@ To create the train generator, specify where the train dataset directory, image 
 The validation generator is created the same way.
 """
 
-image_size = 224 # All images will be resized to 160x160
+image_size = 331 # All images will be resized to 160x160
 batch_size = 32
 
 # Rescale all images by 1./255 and apply image augmentation
@@ -92,49 +97,40 @@ Let's instantiate an MobileNet V2 model pre-loaded with weights trained on Image
 
 IMG_SHAPE = (image_size, image_size, 3)
 
-# Create the base model from the pre-trained model MobileNet V2
-base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
-                                               include_top=False,
-                                               weights='imagenet')
+# create the base pre-trained model
+base_model = NASNetLarge(include_top=False, weights='imagenet', input_shape=IMG_SHAPE)
 
-"""## Feature extraction
-We will freeze the convolutional base created from the previous step and use that as a feature extractor, add a classifier on top of it and train the top-level classifier.
+# add a global spatial average pooling layer
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+# let's add a fully-connected layer
+x = Dense(1024, activation='relu')(x)
+# and a logistic layer -- let's say we have 200 classes
+predictions = Dense(train_generator.num_classes, activation='softmax')(x)
 
-### Freeze the convolutional base
-It's important to freeze the convolutional based before we compile and train the model. By freezing (or setting `layer.trainable = False`), we prevent the weights in these layers from being updated during training.
-"""
+# this is the model we will train
+model = Model(inputs=base_model.input, outputs=predictions)
 
-base_model.trainable = False
+# first: train only the top layers (which were randomly initialized)
+# i.e. freeze all convolutional InceptionV3 layers
+for layer in base_model.layers:
+    layer.trainable = False
 
-# Let's take a look at the base model architecture
-#base_model.summary()
 
-"""#### Add a classification head
-
-Now let's add a few layers on top of the base model:
-"""
-
-model = tf.keras.Sequential([
-  base_model,
-  keras.layers.GlobalAveragePooling2D(),
-#keras.layers.Dense(1, activation='sigmoid')
-  keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.softmax)
-])
-
-"""### Compile the model
-
-You must compile the model before training it.
-"""
-
-model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=0.0001),
+# we need to recompile the model for these modifications to take effect
+# we use SGD with a low learning rate
+from keras.optimizers import SGD
+model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), 
               loss='categorical_crossentropy',
               metrics=['accuracy'])
+
+
 
 model.summary()
 
 """These 1.2K trainable parameters are divided among 2 TensorFlow `Variable` objects, the weights and biases of the two dense layers:"""
 
-len(model.trainable_variables)
+#len(model.trainable_variables)
 
 """### Train the model
 
@@ -155,7 +151,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("train2.h5")
+model.save("train2_NASNetLarge.h5")
 print("Saved model to disk")
 
 """### Learning curves
