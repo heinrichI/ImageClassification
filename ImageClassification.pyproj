@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>train.py</StartupFile>
+    <StartupFile>fine_tuningInceptionV3.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,7 @@
     <Compile Include="fine_tuning.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="fine_tuningInceptionV3.py" />
     <Compile Include="train.py" />
     <Compile Include="sort.py">
       <SubType>Code</SubType>
