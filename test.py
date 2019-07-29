@@ -3,9 +3,12 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 # returns a compiled model
 # identical to the previous one
-model = tf.keras.models.load_model('image_classification.h5')
+model = tf.keras.models.load_model('image_classification_fine.h5')
 
 """As the model trains, the loss and accuracy metrics are displayed. This model reaches an accuracy of about 0.88 (or 88%) on the training data.
 
@@ -16,7 +19,7 @@ Next, compare how the model performs on the test dataset:
 
 image_size = 160 # All images will be resized to 160x160
 batch_size = 32
-train_path='training_data'
+train_path='train'
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)

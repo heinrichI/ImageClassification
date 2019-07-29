@@ -4,6 +4,11 @@ from tensorflow import keras
 import numpy as np
 import glob
 #import pathlib
+import sys
+import getopt
+
+
+labels = ['Girls', 'LatexNoBondage', 'Mummification', 'New York', 'bdsm', 'best', 'Приколы', 'Рисованное']
 
 
 
@@ -16,47 +21,7 @@ Next, compare how the model performs on the test dataset:
 
 image_size = 160 # All images will be resized to 160x160
 batch_size = 32
-sort_dir='Sort'
 
-from SingleDirectoryIterator import SingleDirectoryIterator
-from BSONIterator import BSONIterator
-from DataGenerator import DataGenerator
-from MySequence import MySequence
-
-gen = keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
-
-path = os.path.join(sort_dir, '*')
-all_image_paths = glob.glob(path)
-
-#train_generator = SingleDirectoryIterator(
-#    directory=sort_dir,
-#    filenames=all_image_paths,
-#    labels=None,
-#    image_data_generator=gen,
-#    batch_size=batch_size,
-#    target_size=(image_size, image_size),
-#    seed=1337)
-
-#train_gen = BSONIterator('yuyt', [], [], 
-#                         [], [], None,
-#                         batch_size=batch_size, shuffle=True)
-
-
-
-# Generators
-#training_generator = DataGenerator(partition['train'], labels, **params)
-
-train_generator = MySequence(sort_dir)
-
-
-labels = ['Girls', 'LatexNoBondage', 'Mummification', 'New York', 'bdsm', 'best', 'Приколы', 'Рисованное']
-
-# returns a compiled model
-# identical to the previous one
-model = tf.keras.models.load_model('image_classification.h5')
-
-# Predict from generator (returns probabilities)
-pred=model.predict_generator(train_generator, steps=len(train_generator), verbose=1)
 
 
 def preprocess_image(image):
@@ -71,29 +36,69 @@ def load_and_preprocess_image(path):
   image = tf.read_file(path)
   return preprocess_image(image)
 
-#data_root = pathlib.Path(sort_dir)
-#all_image_paths = list(data_root.glob('*/*'))
-#all_image_paths = [str(path) for path in all_image_paths]
-path = os.path.join(sort_dir, '*')
-all_image_paths = glob.glob(path)
+def usage():
+	print('sort.py -dir <sort dir> -m <model path>')
 
-#labels = (model.)
+def main(argv):
+	sort_dir = ''
+	model_path = ''
 
-for image_paths in all_image_paths:
-    test_image = keras.preprocessing.image.load_img(image_paths, target_size=(image_size, image_size))
-    test_image = keras.preprocessing.image.img_to_array(test_image)
-    test_image = np.expand_dims(test_image, axis=0)
-    test_image.reshape(image_size, image_size, 3)
+	if len(sys.argv) == 1:
+		usage()
+		sys.exit(2)
+	try:
+		opts,args = getopt.getopt(argv, "h:dir:m",["model=","sort_dir="])
+	except getopt.GetoptError:
+		usage()
+		sys.exit(2)
+	for opt, arg in opts:
+		if opt == '-h':
+			usage()
+			sys.exit()
+		elif opt in ("-dir", "--sort_dir"):
+			sort_dir = arg
+		elif opt in ("-m", "--model"):
+			model_path = arg
+		else:
+			usage()
+			sys.exit(2)
+	print('Model path is "', model_path)
+	print('Sorting directory is "', sort_dir)
+   
+   # returns a compiled model
+	# identical to the previous one
+	model = tf.keras.models.load_model(model_path)
 
-    prediction = model.predict(test_image, steps = 1, batch_size=1)
-    predicted_class_indices = np.argmax(prediction,axis=1)
-    classS = labels[predicted_class_indices[0]]
-    #classS = np.array2string(predicted_class_indices)
-    target_dir = os.path.join(sort_dir, classS)
-    if not os.path.exists(target_dir):
-        os.mkdir(target_dir)
-    target_path = os.path.join(target_dir, os.path.basename(image_paths))
-    os.rename(image_paths, target_path)
+	#data_root = pathlib.Path(sort_dir)
+	#all_image_paths = list(data_root.glob('*/*'))
+	#all_image_paths = [str(path) for path in all_image_paths]
+	path = os.path.join(sort_dir, '*')
+	all_image_paths = glob.glob(path)
+
+	#labels = (model.)
+
+	for image_paths in all_image_paths:
+		test_image = keras.preprocessing.image.load_img(image_paths, target_size=(image_size, image_size))
+		test_image = keras.preprocessing.image.img_to_array(test_image)
+		test_image = np.expand_dims(test_image, axis=0)
+		test_image.reshape(image_size, image_size, 3)
+
+		prediction = model.predict(test_image, steps = 1, batch_size=1)
+		predicted_class_indices = np.argmax(prediction,axis=1)
+		classS = labels[predicted_class_indices[0]]
+		#classS = np.array2string(predicted_class_indices)
+		target_dir = os.path.join(sort_dir, classS)
+		if not os.path.exists(target_dir):
+			os.mkdir(target_dir)
+		target_path = os.path.join(target_dir, os.path.basename(image_paths))
+		os.rename(image_paths, target_path)
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
+
+
+
+
 
 
 """## Build a `tf.data.Dataset`
@@ -107,14 +112,16 @@ Slicing the array of strings results in a dataset of strings:
 
 #path_ds = tf.data.Dataset.from_tensor_slices(all_image_paths)
 
-#"""The `output_shapes` and `output_types` fields describe the content of each item in the dataset. In this case it is a set of scalar binary-strings"""
+#"""The `output_shapes` and `output_types` fields describe the content of each
+#item in the dataset.  In this case it is a set of scalar binary-strings"""
 
 #print('shape: ', repr(path_ds.output_shapes))
 #print('type: ', path_ds.output_types)
 #print()
 #print(path_ds)
 
-#"""Now create a new dataset that loads and formats images on the fly by mapping `preprocess_image` over the dataset of paths."""
+#"""Now create a new dataset that loads and formats images on the fly by
+#mapping `preprocess_image` over the dataset of paths."""
 
 
 
@@ -150,15 +157,15 @@ Slicing the array of strings results in a dataset of strings:
 #                img_str = tf.read_file(fname)
 #                img = tf.image.decode_jpeg(img_str, channels=3)
 #                img = cv2.imread(dpath+'train/{}.jpg'.format(id))
-#                #img = cv2.resize(img, (224, 224), interpolation = cv2.INTER_AREA)
+#                #img = cv2.resize(img, (224, 224), interpolation =
+#                cv2.INTER_AREA)
 #                labelname=df_train.loc[df_train.id==id,'column_name'].values
 #                labelnum=classes.index(labelname)
 #                x_batch.append(img)
 #                y_batch.append(labelnum)
-#            x_batch = np.array(x_batch, np.float32) 
-#            y_batch = to_categorical(y_batch,120) 
+#            x_batch = np.array(x_batch, np.float32)
+#            y_batch = to_categorical(y_batch,120)
 #            yield x_batch, y_batch
-
 def batch_generator(ids):
     while True:
         for start in range(0, len(ids), batch_size):
@@ -169,10 +176,11 @@ def batch_generator(ids):
             for id in ids_batch:
                 img_str = tf.read_file(fname)
                 img = tf.image.decode_jpeg(img_str, channels=3)
-                img = cv2.imread(dpath+'train/{}.jpg'.format(id))
-                #img = cv2.resize(img, (224, 224), interpolation = cv2.INTER_AREA)
-                labelname=df_train.loc[df_train.id==id,'column_name'].values
-                labelnum=classes.index(labelname)
+                img = cv2.imread(dpath + 'train/{}.jpg'.format(id))
+                #img = cv2.resize(img, (224, 224), interpolation =
+                #cv2.INTER_AREA)
+                labelname = df_train.loc[df_train.id == id,'column_name'].values
+                labelnum = classes.index(labelname)
                 x_batch.append(img)
                 y_batch.append(labelnum)
             x_batch = np.array(x_batch, np.float32) 
@@ -196,14 +204,14 @@ def batch_generator(ids):
   ## These are gif images so they return as (num_frames, h, w, c)
   #label_img = tf.image.decode_gif(label_img_str)[0]
   ## The label image should only have values of 1 or 0, indicating pixel wise
-  ## object (car) or not (background). We take the first channel only. 
+  ## object (car) or not (background).  We take the first channel only.
   #label_img = label_img[:, :, 0]
   #label_img = tf.expand_dims(label_img, axis=-1)
   #return img, label_img
 
 # Flow training images in batches of 20 using train_datagen generator
 #test_generator = test_datagen.flow_from_directory(
-#                sort_dir,  # Source directory for the training images
+#                sort_dir, # Source directory for the training images
 #                target_size=(image_size, image_size),
 #                batch_size=batch_size,
 #                class_mode=None,
@@ -212,12 +220,12 @@ def batch_generator(ids):
 #test_generator = test_datagen.flow_from_dataframe(directory=sort_dir)
 
 #if (test_generator.n < batch_size):
-#    raise ValueError('n sample %d < batch size %d!' % (test_generator.n, batch_size))
+#    raise ValueError('n sample %d < batch size %d!' % (test_generator.n,
+#    batch_size))
 
 #test_loss, test_acc = model.evaluate(test_generator)
 
 #print('Test accuracy:', test_acc)
-
 
 
 """It turns out, the accuracy on the test dataset is a little less than the accuracy on the training dataset. This gap between training accuracy and test accuracy is an example of *overfitting*. Overfitting is when a machine learning model performs worse on new data than on their training data.

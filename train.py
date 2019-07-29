@@ -36,7 +36,7 @@ def _parse_function(filename, label):
   return image_resized, label
 
 
-train_path='train'
+train_path=r'C:\Image Recognition tenserflow\train2'
 classes = os.listdir(train_path)
 num_classes = len(classes)
 print(num_classes)
@@ -50,7 +50,7 @@ To create the train generator, specify where the train dataset directory, image 
 The validation generator is created the same way.
 """
 
-image_size = 160 # All images will be resized to 160x160
+image_size = 224 # All images will be resized to 160x160
 batch_size = 32
 
 # Rescale all images by 1./255 and apply image augmentation
@@ -81,6 +81,10 @@ validation_generator = train_datagen.flow_from_directory(
                 batch_size=batch_size,
                 class_mode='categorical',
                 subset='validation')
+
+with open("labels.txt", "w") as txt_file:
+    for cls in train_generator.class_indices:
+        txt_file.write(cls + "\n") # works with any number of elements in a line
 
 """## Create the base model from the pre-trained convnets
 We will create the base model from the **MobileNet V2** model developed at Google, and pre-trained on the ImageNet dataset, a large dataset of 1.4M images and 1000 classes of web images. This is a powerful model. Let's see what the features that it has learned can do for our cat vs. dog problem.
@@ -155,7 +159,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("image_classification.h5")
+model.save("train2.h5")
 print("Saved model to disk")
 
 """### Learning curves

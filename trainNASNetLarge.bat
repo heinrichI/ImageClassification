@@ -1,0 +1,2 @@
+python trainNASNetLarge.py
+pause

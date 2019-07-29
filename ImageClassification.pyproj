@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>fine_tuningInceptionV3.py</StartupFile>
+    <StartupFile>evaluate.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -13,6 +13,8 @@
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId />
+    <CommandLineArguments>-d "c:\Image Recognition tenserflow\train2" -m test2_inception_v3.h5 -s 224</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
@@ -20,13 +22,31 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BSONIterator.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="continue_training.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataGenerator.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="evaluate.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="fine_tuning.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="fine_tuningInceptionV3.py" />
+    <Compile Include="fine_tuning_InceptionV3.py" />
+    <Compile Include="fine_tuning_NasNet.py" />
+    <Compile Include="MySequence.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SingleDirectoryIterator.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sortArgument.py" />
+    <Compile Include="sortNasnet.py" />
     <Compile Include="train.py" />
     <Compile Include="sort.py">
       <SubType>Code</SubType>
@@ -35,6 +55,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="trainInceptionV3.py" />
+    <Compile Include="trainNASNetLarge.py" />
+    <Compile Include="volume.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

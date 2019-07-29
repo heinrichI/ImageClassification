@@ -4,8 +4,35 @@ from tensorflow import keras
 import numpy as np
 import glob
 #import pathlib
+from keras.applications.nasnet import NASNetLarge
 
+image_size = 331 # All images will be resized to 160x160
+batch_size = 32
+sort_dir=r'd:\Сеть\Wallpapers\5000 Впечатлений'
 
+#labels = ['Girls', 'LatexNoBondage', 'Mummification', 'New York', 'bdsm', 'best', 'Приколы', 'Рисованное']
+
+#labels_path = tf.keras.utils.get_file('ImageNetLabels.txt', r'c:\SourcePython\ImageNetLabels.txt')
+##File containing the path to images and the labels [path/to/images label]
+labels_path = r'c:\SourcePython\ImageNetLabels.txt'
+##Reading file and extracting paths and labels
+#with open(filename, 'r') as File:
+#    infoFile = File.readlines() #Reading all the lines from File
+#    for line in infoFile: #Reading line-by-line
+#        words = line.split() #Splitting lines in words using space character as separator
+#        filenames.append(words[0])
+#        labels.append(int(words[1]))
+
+imagenet_labels = np.array(open(labels_path).read().splitlines()[1:])
+
+IMG_SHAPE = (image_size, image_size, 3)
+# create the base pre-trained model
+#base_model = NASNetLarge(include_top=True, weights='imagenet', input_shape=IMG_SHAPE)
+#base_model.save("nasnet_large.h5")
+
+# returns a compiled model
+# identical to the previous one
+model = tf.keras.models.load_model('nasnet_large.h5')
 
 """As the model trains, the loss and accuracy metrics are displayed. This model reaches an accuracy of about 0.88 (or 88%) on the training data.
 
@@ -14,49 +41,6 @@ import glob
 Next, compare how the model performs on the test dataset:
 """
 
-image_size = 160 # All images will be resized to 160x160
-batch_size = 32
-sort_dir='Sort'
-
-from SingleDirectoryIterator import SingleDirectoryIterator
-from BSONIterator import BSONIterator
-from DataGenerator import DataGenerator
-from MySequence import MySequence
-
-gen = keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
-
-path = os.path.join(sort_dir, '*')
-all_image_paths = glob.glob(path)
-
-#train_generator = SingleDirectoryIterator(
-#    directory=sort_dir,
-#    filenames=all_image_paths,
-#    labels=None,
-#    image_data_generator=gen,
-#    batch_size=batch_size,
-#    target_size=(image_size, image_size),
-#    seed=1337)
-
-#train_gen = BSONIterator('yuyt', [], [], 
-#                         [], [], None,
-#                         batch_size=batch_size, shuffle=True)
-
-
-
-# Generators
-#training_generator = DataGenerator(partition['train'], labels, **params)
-
-train_generator = MySequence(sort_dir)
-
-
-labels = ['Girls', 'LatexNoBondage', 'Mummification', 'New York', 'bdsm', 'best', 'Приколы', 'Рисованное']
-
-# returns a compiled model
-# identical to the previous one
-model = tf.keras.models.load_model('image_classification.h5')
-
-# Predict from generator (returns probabilities)
-pred=model.predict_generator(train_generator, steps=len(train_generator), verbose=1)
 
 
 def preprocess_image(image):
@@ -70,6 +54,8 @@ def preprocess_image(image):
 def load_and_preprocess_image(path):
   image = tf.read_file(path)
   return preprocess_image(image)
+
+
 
 #data_root = pathlib.Path(sort_dir)
 #all_image_paths = list(data_root.glob('*/*'))
@@ -87,9 +73,10 @@ for image_paths in all_image_paths:
 
     prediction = model.predict(test_image, steps = 1, batch_size=1)
     predicted_class_indices = np.argmax(prediction,axis=1)
-    classS = labels[predicted_class_indices[0]]
+    #classS = labels[predicted_class_indices[0]]
+    predicted_class_name = imagenet_labels[predicted_class_indices[0]]
     #classS = np.array2string(predicted_class_indices)
-    target_dir = os.path.join(sort_dir, classS)
+    target_dir = os.path.join(sort_dir, predicted_class_name)
     if not os.path.exists(target_dir):
         os.mkdir(target_dir)
     target_path = os.path.join(target_dir, os.path.basename(image_paths))

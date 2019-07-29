@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 
-from keras.applications.inception_v3 import InceptionV3
+from keras.applications.nasnet import NASNetLarge
 from keras.preprocessing import image
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
@@ -41,7 +41,7 @@ def _parse_function(filename, label):
   return image_resized, label
 
 
-train_path=r'C:\Image Recognition tenserflow\train2'
+train_path=r'c:\Image Recognition tenserflow\train2'
 classes = os.listdir(train_path)
 num_classes = len(classes)
 print(num_classes)
@@ -55,8 +55,8 @@ To create the train generator, specify where the train dataset directory, image 
 The validation generator is created the same way.
 """
 
-image_size = 224 # All images will be resized to 160x160
-batch_size = 64
+image_size = 331 # All images will be resized to 
+batch_size = 16
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -87,6 +87,10 @@ validation_generator = train_datagen.flow_from_directory(
                 class_mode='categorical',
                 subset='validation')
 
+with open("train2_labels.txt", "w") as txt_file:
+    for cls in train_generator.class_indices:
+        txt_file.write(cls + "\n") # works with any number of elements in a line
+
 """## Create the base model from the pre-trained convnets
 We will create the base model from the **MobileNet V2** model developed at Google, and pre-trained on the ImageNet dataset, a large dataset of 1.4M images and 1000 classes of web images. This is a powerful model. Let's see what the features that it has learned can do for our cat vs. dog problem.
 
@@ -98,7 +102,7 @@ Let's instantiate an MobileNet V2 model pre-loaded with weights trained on Image
 IMG_SHAPE = (image_size, image_size, 3)
 
 # create the base pre-trained model
-base_model = InceptionV3(weights='imagenet', include_top=False)
+base_model = NASNetLarge(include_top=False, weights='imagenet', input_shape=IMG_SHAPE)
 
 # add a global spatial average pooling layer
 x = base_model.output
@@ -151,7 +155,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("test2_inception_v3.h5")
+model.save("train2_NASNetLarge.h5")
 print("Saved model to disk")
 
 """### Learning curves
