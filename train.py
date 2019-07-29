@@ -82,6 +82,10 @@ validation_generator = train_datagen.flow_from_directory(
                 class_mode='categorical',
                 subset='validation')
 
+with open("labels.txt", "w") as txt_file:
+    for cls in train_generator.classes:
+        txt_file.write(cls + "\n") # works with any number of elements in a line
+
 """## Create the base model from the pre-trained convnets
 We will create the base model from the **MobileNet V2** model developed at Google, and pre-trained on the ImageNet dataset, a large dataset of 1.4M images and 1000 classes of web images. This is a powerful model. Let's see what the features that it has learned can do for our cat vs. dog problem.
 
