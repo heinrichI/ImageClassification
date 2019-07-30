@@ -47,7 +47,6 @@
     </Compile>
     <Compile Include="sortArgument.py" />
     <Compile Include="sortNasnet.py" />
-    <Compile Include="train.py" />
     <Compile Include="sort.py">
       <SubType>Code</SubType>
     </Compile>
@@ -55,6 +54,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="trainInceptionV3.py" />
+    <Compile Include="trainMobileNetV2.py" />
+    <Compile Include="trainMobileNetV2_binary.py" />
     <Compile Include="trainNASNetLarge.py" />
     <Compile Include="volume.py" />
   </ItemGroup>
