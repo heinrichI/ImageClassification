@@ -7,10 +7,10 @@ import numpy as np
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path='train'
+train_path=r'c:\Image Recognition tenserflow\train2'
 
-image_size = 160 # All images will be resized to 160x160
-batch_size = 32
+image_size = 224 # All images will be resized to 160x160
+batch_size = 64
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,

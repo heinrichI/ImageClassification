@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>evaluate.py</StartupFile>
+    <StartupFile>fine_tuning_NasNet.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -34,10 +34,8 @@
     <Compile Include="evaluate.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="fine_tuning.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="fine_tuning_InceptionV3.py" />
+    <Compile Include="fine_tuning_MobileNetV2.py" />
     <Compile Include="fine_tuning_NasNet.py" />
     <Compile Include="MySequence.py">
       <SubType>Code</SubType>

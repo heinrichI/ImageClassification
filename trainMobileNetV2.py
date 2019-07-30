@@ -50,8 +50,8 @@ To create the train generator, specify where the train dataset directory, image 
 The validation generator is created the same way.
 """
 
-image_size = 224 # All images will be resized to 160x160
-batch_size = 32
+image_size = 224 # All images will be resized to 224x224
+batch_size = 64
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -82,7 +82,7 @@ validation_generator = train_datagen.flow_from_directory(
                 class_mode='categorical',
                 subset='validation')
 
-with open("labels.txt", "w") as txt_file:
+with open("train2_labels.txt", "w") as txt_file:
     for cls in train_generator.class_indices:
         txt_file.write(cls + "\n") # works with any number of elements in a line
 
@@ -119,10 +119,11 @@ Now let's add a few layers on top of the base model:
 """
 
 model = tf.keras.Sequential([
-  base_model,
-  keras.layers.GlobalAveragePooling2D(),
+	base_model,
+	keras.layers.GlobalAveragePooling2D(),
 #keras.layers.Dense(1, activation='sigmoid')
-  keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.softmax)
+	keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.relu),
+	keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.softmax)
 ])
 
 """### Compile the model
@@ -159,7 +160,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("train2.h5")
+model.save("train2_MobileNetV2_hiden.h5")
 print("Saved model to disk")
 
 """### Learning curves

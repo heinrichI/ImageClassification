@@ -3,8 +3,8 @@ from tensorflow import keras
 import sys
 import argparse
 
-from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+batch_size = 64
+
 
 #def usage():
 #	print('evaluate.py -dir <test dir> -m <model path> -s <image size>')
@@ -27,13 +27,11 @@ def main(argv):
 	#parser.add_argument("-s", "--image_size", help="increase output verbosity",
  #                   action="store_true")
 	parser.add_argument("-s", type=int, help="image_size")
-	parser.add_argument("-b", type=int, help="batch_size")
 	args = parser.parse_args()
 	
 	print('Model path is ', args.m)
 	print('Testing directory is ', args.d)
 	print('Image size is ', args.s)
-	print('Batch size is ', args.b)
    
    # returns a compiled model
 	# identical to the previous one
@@ -48,8 +46,8 @@ def main(argv):
 	train_generator = train_datagen.flow_from_directory(
 					args.d,  # Source directory for the training images
 					target_size=(args.s, args.s),
-					batch_size=args.b,
-					class_mode='categorical')
+					batch_size=batch_size,
+					class_mode='binary')
 
 	test_loss, test_acc = model.evaluate(train_generator)
 

@@ -60,7 +60,7 @@ validation_generator = train_datagen.flow_from_directory(
                 class_mode='binary',
                 subset='validation')
 
-with open("labels.txt", "w") as txt_file:
+with open("Tianna Gregory Instagram_labels.txt", "w") as txt_file:
     for cls in train_generator.class_indices:
         txt_file.write(cls + "\n") # works with any number of elements in a line
 
