@@ -18,15 +18,22 @@ image_size = 160 # All images will be resized to 160x160
 batch_size = 32
 sort_dir='Sort'
 
-from SingleDirectoryIterator import SingleDirectoryIterator
-from BSONIterator import BSONIterator
-from DataGenerator import DataGenerator
+#from SingleDirectoryIterator import SingleDirectoryIterator
+#from BSONIterator import BSONIterator
+#from DataGenerator import DataGenerator
 from MySequence import MySequence
 
-gen = keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
+labels = []
+f=open("labels.txt", "r")
+if f.mode == 'r': 
+	labels = f.read().splitlines()
+		#for x in fl:
+		#	print(x)
 
-path = os.path.join(sort_dir, '*')
-all_image_paths = glob.glob(path)
+#gen = keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
+
+#path = os.path.join(sort_dir, '*')
+#all_image_paths = glob.glob(path)
 
 #train_generator = SingleDirectoryIterator(
 #    directory=sort_dir,
@@ -46,17 +53,29 @@ all_image_paths = glob.glob(path)
 # Generators
 #training_generator = DataGenerator(partition['train'], labels, **params)
 
-train_generator = MySequence(sort_dir)
+train_generator = MySequence(sort_dir, batch_size=2, image_size=160)
 
-
-labels = ['Girls', 'LatexNoBondage', 'Mummification', 'New York', 'bdsm', 'best', 'Приколы', 'Рисованное']
 
 # returns a compiled model
 # identical to the previous one
 model = tf.keras.models.load_model('image_classification.h5')
 
+sort_callback = tf.keras.callbacks.LambdaCallback(
+    on_batch_end =lambda batch, logs: [
+       print(file) for file in batch])
+
 # Predict from generator (returns probabilities)
-pred=model.predict_generator(train_generator, steps=len(train_generator), verbose=1)
+pred=model.predict_generator(train_generator, 
+							 steps=len(train_generator), 
+							 verbose=1,
+							 callbacks=[sort_callback])
+
+
+for i, prediction in pred:
+	train_generator.all_image_paths
+	max_predict = numpy.amax(prediction,axis=1)
+	predicted_class_indices = np.argmax(prediction,axis=1)
+	class_name = labels[predicted_class_indices[0]]
 
 
 def preprocess_image(image):
