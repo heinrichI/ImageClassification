@@ -2,11 +2,15 @@ import os
 import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 train_path=r'c:\Image Recognition tenserflow\train2'
+model_name = 'train2_NASNetLarge.h5'
+save_model_name = 'train2_NASNetLarge_continue.h5'
+#auto_save_model_name = 'train2_NASNetLarge_continue_auto.h5'
 
 image_size = 331 # All images will be resized to
 batch_size = 16
@@ -41,7 +45,11 @@ validation_generator = train_datagen.flow_from_directory(
                 subset='validation')
 
 
-model = tf.keras.models.load_model('train2_NASNetLarge.h5')
+model = tf.keras.models.load_model(model_name)
+
+#if os.path.exists(auto_save_model_name):
+#	model.load_weights(auto_save_model_name)
+#	print ("Checkpoint '" + auto_save_model_name + "' loaded.")
 
 """### Train the model
 
@@ -50,9 +58,12 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 10
+epochs = 1
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
+
+#Save the model after every epoch.
+#mc_fit = ModelCheckpoint(auto_save_model_name, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', save_freq=1)
 
 history = model.fit_generator(train_generator,
                               steps_per_epoch = steps_per_epoch,
@@ -62,7 +73,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("train2_NASNetLarge_continue.h5")
+model.save(save_model_name)
 print("Saved model to disk")
 
 """### Learning curves

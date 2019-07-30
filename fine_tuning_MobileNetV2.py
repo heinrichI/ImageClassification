@@ -8,6 +8,8 @@ from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 train_path=r'c:\Image Recognition tenserflow\train2'
+model_name = 'train2_MobileNetV2_continue.h5'
+save_model_name = 'train2_MobileNetV2_fine.h5'
 
 image_size = 224 # All images will be resized to 160x160
 batch_size = 64
@@ -42,7 +44,7 @@ validation_generator = train_datagen.flow_from_directory(
                 subset='validation')
 
 
-model = tf.keras.models.load_model('image_classification.h5')
+model = tf.keras.models.load_model(model_name)
 
 
 """## Create the base model from the pre-trained convnets
@@ -115,7 +117,7 @@ history_fine = model.fit_generator(train_generator,
                                    validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("image_classification_fine.h5")
+model.save(save_model_name)
 print("Saved model to disk")
 
 """### Learning curves

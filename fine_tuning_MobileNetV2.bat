@@ -1,0 +1,2 @@
+python fine_tuning_MobileNetV2.py
+pause

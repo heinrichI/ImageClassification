@@ -70,8 +70,7 @@ pred=model.predict_generator(train_generator,
 							 verbose=1,
 							 callbacks=[sort_callback])
 
-
-for i, prediction in pred:
+for idx, prediction in enumerate(pred):
 	train_generator.all_image_paths
 	max_predict = numpy.amax(prediction,axis=1)
 	predicted_class_indices = np.argmax(prediction,axis=1)

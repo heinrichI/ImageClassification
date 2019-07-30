@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>fine_tuning_NasNet.py</StartupFile>
+    <StartupFile>continue_training_NasNet.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,9 +25,8 @@
     <Compile Include="BSONIterator.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="continue_training.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="continue_training_MobileNetV2.py" />
+    <Compile Include="continue_training_NasNet.py" />
     <Compile Include="DataGenerator.py">
       <SubType>Code</SubType>
     </Compile>
