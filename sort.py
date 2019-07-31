@@ -15,8 +15,11 @@ Next, compare how the model performs on the test dataset:
 """
 
 image_size = 160 # All images will be resized to 160x160
-batch_size = 32
+batch_size = 16
+label_name = "Test_labels.txt"
+model_name = 'Test.h5'
 sort_dir='Sort'
+confidence_threshold = 0.9999
 
 #from SingleDirectoryIterator import SingleDirectoryIterator
 #from BSONIterator import BSONIterator
@@ -24,7 +27,7 @@ sort_dir='Sort'
 from MySequence import MySequence
 
 labels = []
-f=open("labels.txt", "r")
+f=open(label_name, "r")
 if f.mode == 'r': 
 	labels = f.read().splitlines()
 		#for x in fl:
@@ -53,65 +56,99 @@ if f.mode == 'r':
 # Generators
 #training_generator = DataGenerator(partition['train'], labels, **params)
 
-train_generator = MySequence(sort_dir, batch_size=2, image_size=160)
+train_generator = MySequence(sort_dir, batch_size=batch_size, image_size=image_size)
 
 
 # returns a compiled model
 # identical to the previous one
-model = tf.keras.models.load_model('image_classification.h5')
+model = tf.keras.models.load_model(model_name)
 
-sort_callback = tf.keras.callbacks.LambdaCallback(
-    on_batch_end =lambda batch, logs: [
-       print(file) for file in batch])
+#sort_callback = tf.keras.callbacks.LambdaCallback(
+#    on_batch_end =lambda batch, logs: [
+#       print(file) for file in batch])
 
 # Predict from generator (returns probabilities)
 pred=model.predict_generator(train_generator, 
 							 steps=len(train_generator), 
-							 verbose=1,
-							 callbacks=[sort_callback])
+							 verbose=1)
+
+# Print iterations progress
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+
+total = len(pred)
+printProgressBar(0, total, prefix = '0/{0}'.format(total), suffix = 'Complete', length = 50)
 
 for idx, prediction in enumerate(pred):
-	train_generator.all_image_paths
-	max_predict = numpy.amax(prediction,axis=1)
-	predicted_class_indices = np.argmax(prediction,axis=1)
-	class_name = labels[predicted_class_indices[0]]
+	
+	max_predict = np.amax(prediction)
+	if (max_predict > confidence_threshold):
+		predicted_class_indices = np.argmax(prediction)
+		class_name = labels[predicted_class_indices]
+		target_dir = os.path.join(sort_dir, class_name)
+		if not os.path.exists(target_dir):
+			os.mkdir(target_dir)
+		image_path = train_generator.all_image_paths[idx]
+		target_path = os.path.join(target_dir, os.path.basename(image_path))
+		os.rename(image_path, target_path)
+	else:
+		print('confidence {} < confidence threshold {} for file {}'.format(max_predict, confidence_threshold, 
+																	 train_generator.all_image_paths[idx]))
+	 # Update Progress Bar
+	printProgressBar(idx + 1, total, prefix = '{}/{}'.format(idx,total), suffix = 'Complete', length = 50)
 
+#def preprocess_image(image):
+#  image = tf.image.decode_jpeg(image, channels=3)
+#  image = tf.image.resize(image, [image_size, image_size])
+#  image /= 255.0  # normalize to [0,1] range
+#  #image = (image/127.5) - 1
 
-def preprocess_image(image):
-  image = tf.image.decode_jpeg(image, channels=3)
-  image = tf.image.resize(image, [image_size, image_size])
-  image /= 255.0  # normalize to [0,1] range
-  #image = (image/127.5) - 1
+#  return image
 
-  return image
-
-def load_and_preprocess_image(path):
-  image = tf.read_file(path)
-  return preprocess_image(image)
+#def load_and_preprocess_image(path):
+#  image = tf.read_file(path)
+#  return preprocess_image(image)
 
 #data_root = pathlib.Path(sort_dir)
 #all_image_paths = list(data_root.glob('*/*'))
 #all_image_paths = [str(path) for path in all_image_paths]
-path = os.path.join(sort_dir, '*')
-all_image_paths = glob.glob(path)
+#path = os.path.join(sort_dir, '*')
+#all_image_paths = glob.glob(path)
 
 #labels = (model.)
 
-for image_paths in all_image_paths:
-    test_image = keras.preprocessing.image.load_img(image_paths, target_size=(image_size, image_size))
-    test_image = keras.preprocessing.image.img_to_array(test_image)
-    test_image = np.expand_dims(test_image, axis=0)
-    test_image.reshape(image_size, image_size, 3)
+#for image_paths in all_image_paths:
+#    test_image = keras.preprocessing.image.load_img(image_paths, target_size=(image_size, image_size))
+#    test_image = keras.preprocessing.image.img_to_array(test_image)
+#    test_image = np.expand_dims(test_image, axis=0)
+#    test_image.reshape(image_size, image_size, 3)
 
-    prediction = model.predict(test_image, steps = 1, batch_size=1)
-    predicted_class_indices = np.argmax(prediction,axis=1)
-    classS = labels[predicted_class_indices[0]]
-    #classS = np.array2string(predicted_class_indices)
-    target_dir = os.path.join(sort_dir, classS)
-    if not os.path.exists(target_dir):
-        os.mkdir(target_dir)
-    target_path = os.path.join(target_dir, os.path.basename(image_paths))
-    os.rename(image_paths, target_path)
+#    prediction = model.predict(test_image, steps = 1, batch_size=1)
+#    predicted_class_indices = np.argmax(prediction,axis=1)
+#    classS = labels[predicted_class_indices[0]]
+#    #classS = np.array2string(predicted_class_indices)
+#    target_dir = os.path.join(sort_dir, classS)
+#    if not os.path.exists(target_dir):
+#        os.mkdir(target_dir)
+#    target_path = os.path.join(target_dir, os.path.basename(image_paths))
+#    os.rename(image_paths, target_path)
 
 
 """## Build a `tf.data.Dataset`
@@ -177,25 +214,25 @@ Slicing the array of strings results in a dataset of strings:
 #            y_batch = to_categorical(y_batch,120) 
 #            yield x_batch, y_batch
 
-def batch_generator(ids):
-    while True:
-        for start in range(0, len(ids), batch_size):
-            x_batch = []
-            y_batch = []
-            end = min(start + batch_size, len(ids))
-            ids_batch = ids[start:end]
-            for id in ids_batch:
-                img_str = tf.read_file(fname)
-                img = tf.image.decode_jpeg(img_str, channels=3)
-                img = cv2.imread(dpath+'train/{}.jpg'.format(id))
-                #img = cv2.resize(img, (224, 224), interpolation = cv2.INTER_AREA)
-                labelname=df_train.loc[df_train.id==id,'column_name'].values
-                labelnum=classes.index(labelname)
-                x_batch.append(img)
-                y_batch.append(labelnum)
-            x_batch = np.array(x_batch, np.float32) 
-            y_batch = to_categorical(y_batch,120) 
-            yield x_batch, y_batch
+#def batch_generator(ids):
+#    while True:
+#        for start in range(0, len(ids), batch_size):
+#            x_batch = []
+#            y_batch = []
+#            end = min(start + batch_size, len(ids))
+#            ids_batch = ids[start:end]
+#            for id in ids_batch:
+#                img_str = tf.read_file(fname)
+#                img = tf.image.decode_jpeg(img_str, channels=3)
+#                img = cv2.imread(dpath+'train/{}.jpg'.format(id))
+#                #img = cv2.resize(img, (224, 224), interpolation = cv2.INTER_AREA)
+#                labelname=df_train.loc[df_train.id==id,'column_name'].values
+#                labelnum=classes.index(labelname)
+#                x_batch.append(img)
+#                y_batch.append(labelnum)
+#            x_batch = np.array(x_batch, np.float32) 
+#            y_batch = to_categorical(y_batch,120) 
+#            yield x_batch, y_batch
 
 
 #for fname in files:

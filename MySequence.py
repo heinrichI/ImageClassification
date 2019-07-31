@@ -3,13 +3,16 @@ import numpy as np
 import os
 import glob
 
+
 class MySequence(tensorflow.keras.utils.Sequence):
 
 	def __init__(self, sort_dir, batch_size=32, image_size=224):
 		'Initialization'
 		self.batch_size = batch_size
 		path = os.path.join(sort_dir, '*')
-		self.all_image_paths = glob.glob(path)
+		#self.all_image_paths = glob.glob(path)
+		#self.all_image_paths = [f for f in os.listdir(sort_dir) if os.path.isfile(f)]
+		self.all_image_paths = [name for name in glob.glob(os.path.join(sort_dir,'*.*')) if os.path.isfile(name)]
 		self.image_size = image_size
 		self.indexes = np.arange(len(self.all_image_paths))
 
