@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
  
 #tf.enable_eager_execution()
 
+train_path=r'c:\Image Recognition tenserflow\Animals_train'
+save_model_name = 'Animals_MobileNetV2.h5'
+label_path = "Animals_label.txt"
+
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -36,7 +40,6 @@ def _parse_function(filename, label):
   return image_resized, label
 
 
-train_path=r'C:\Image Recognition tenserflow\train2'
 classes = os.listdir(train_path)
 num_classes = len(classes)
 print(num_classes)
@@ -82,7 +85,7 @@ validation_generator = train_datagen.flow_from_directory(
                 class_mode='categorical',
                 subset='validation')
 
-with open("train2_labels.txt", "w") as txt_file:
+with open(label_path, "w") as txt_file:
     for cls in train_generator.class_indices:
         txt_file.write(cls + "\n") # works with any number of elements in a line
 
@@ -148,7 +151,7 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 10
+epochs = 20
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 
@@ -160,7 +163,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("train2_MobileNetV2_hiden.h5")
+model.save(save_model_name)
 print("Saved model to disk")
 
 """### Learning curves

@@ -1,0 +1,2 @@
+python continue_training_MobileNetV2_binary.py
+pause

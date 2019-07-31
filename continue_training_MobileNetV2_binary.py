@@ -7,13 +7,13 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\train2'
-model_name = 'train2_NASNetLarge_continue.h5'
-save_model_name = 'train2_NASNetLarge_continue2.h5'
-#auto_save_model_name = 'train2_NASNetLarge_continue_auto.h5'
+train_path=r'c:\Image Recognition tenserflow\Tianna Gregory Instagram'
+model_name = 'TiannaGregoryInstagram_MobileNetV2_binary.h5'
+save_model_name = 'TiannaGregoryInstagram_MobileNetV2_binary_continue2.h5'
 
-image_size = 331 # All images will be resized to
-batch_size = 16
+
+image_size = 224 # All images will be resized to 224x224
+batch_size = 64
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -32,7 +32,7 @@ train_generator = train_datagen.flow_from_directory(
                 train_path,  # Source directory for the training images
                 target_size=(image_size, image_size),
                 batch_size=batch_size,
-                class_mode='categorical',
+                class_mode='binary',
                 subset='training')
 
 
@@ -41,15 +41,11 @@ validation_generator = train_datagen.flow_from_directory(
                 train_path, # Source directory for the validation images
                 target_size=(image_size, image_size),
                 batch_size=batch_size,
-                class_mode='categorical',
+                class_mode='binary',
                 subset='validation')
-
 
 model = tf.keras.models.load_model(model_name)
 
-#if os.path.exists(auto_save_model_name):
-#	model.load_weights(auto_save_model_name)
-#	print ("Checkpoint '" + auto_save_model_name + "' loaded.")
 
 """### Train the model
 
@@ -61,9 +57,6 @@ If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 epochs = 10
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
-
-#Save the model after every epoch.
-#mc_fit = ModelCheckpoint(auto_save_model_name, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', save_freq=1)
 
 history = model.fit_generator(train_generator,
                               steps_per_epoch = steps_per_epoch,

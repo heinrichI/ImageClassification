@@ -7,12 +7,12 @@ import numpy as np
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\train2'
-model_name = 'train2_NASNetLarge_continue2.h5'
-save_model_name = 'train2_NASNetLarge_fine.h5'
+train_path=r'c:\Image Recognition tenserflow\Tianna Gregory Instagram'
+model_name = 'TiannaGregoryInstagram_MobileNetV2_binary_fine.h5'
+save_model_name = 'TiannaGregoryInstagram_MobileNetV2_binary_fine2.h5'
 
-image_size = 331 # All images will be resized to 331x331
-batch_size = 16
+image_size = 224 # All images will be resized to 160x160
+batch_size = 64
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -31,7 +31,7 @@ train_generator = train_datagen.flow_from_directory(
                 train_path,  # Source directory for the training images
                 target_size=(image_size, image_size),
                 batch_size=batch_size,
-                class_mode='categorical',
+                class_mode='binary',
                 subset='training')
 
 
@@ -40,7 +40,7 @@ validation_generator = train_datagen.flow_from_directory(
                 train_path, # Source directory for the validation images
                 target_size=(image_size, image_size),
                 batch_size=batch_size,
-                class_mode='categorical',
+                class_mode='binary',
                 subset='validation')
 
 
@@ -75,30 +75,17 @@ Additionally, the reasoning behind fine-tuning the top layers of the pre-trained
 All we need to do is unfreeze the `base_model`, and set the bottom layers be un-trainable. Then, recompile the model (necessary for these changes to take effect), and resume training.
 """
 
-model.trainable = True
+model.layers[0].trainable = True
 
-set_trainable = False
-for layer in model.layers:
-  if layer.name == 'activation_253':
-    set_trainable = True
-  if set_trainable:
-    layer.trainable = True
-  else:
-    layer.trainable = False
-  print("layer {} is {}".format(layer.name, '+++trainable' if layer.trainable else '---frozen'))
+# Let's take a look to see how many layers are in the base model
+#print("Number of layers in the base model: ", len(base_model.layers))
 
-
-#model.layers[0].trainable = True
-
-## Let's take a look to see how many layers are in the base model
-##print("Number of layers in the base model: ", len(base_model.layers))
-
-## Fine tune from this layer onwards
-#fine_tune_at = 100
+# Fine tune from this layer onwards
+fine_tune_at = 100
   
-## Freeze all the layers before the `fine_tune_at` layer
-#for layer in model.layers[0].layers[:fine_tune_at]:
-#  layer.trainable =  False
+# Freeze all the layers before the `fine_tune_at` layer
+for layer in model.layers[0].layers[:fine_tune_at]:
+  layer.trainable =  False
 
 """### Compile the model
 
@@ -106,7 +93,7 @@ Compile the model using a much-lower training rate.
 """
 
 model.compile(optimizer = tf.keras.optimizers.RMSprop(lr=2e-5),
-              loss='categorical_crossentropy',
+              loss='binary_crossentropy',
               metrics=['accuracy'])
 
 model.summary()
