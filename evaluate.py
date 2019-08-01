@@ -38,6 +38,8 @@ def main(argv):
    # returns a compiled model
 	# identical to the previous one
 	model = tf.keras.models.load_model(args.m)
+	
+	model.summary()
 
 	# Rescale all images by 1./255 and apply image augmentation
 	train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)

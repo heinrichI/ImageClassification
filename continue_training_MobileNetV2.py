@@ -7,10 +7,10 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\Animals_train'
-model_name = 'Animals_MobileNetV2.h5'
-save_model_name = 'Animals_MobileNetV2_continue2.h5'
-auto_save_model_name = 'Animals_MobileNetV2_continue_auto.h5'
+train_path=r'c:\Image Recognition tenserflow\train2'
+model_name = 'train2_MobileNetV2_hiden.h5'
+save_model_name = 'train2_MobileNetV2_hiden_continue2.h5'
+auto_save_model_name = 'train2_MobileNetV2_hiden_continue_auto.h5'
 
 image_size = 224 # All images will be resized to 224x224
 batch_size = 64
@@ -59,7 +59,7 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 10
+epochs = 20
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 

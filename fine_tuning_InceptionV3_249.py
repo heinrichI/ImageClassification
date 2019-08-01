@@ -3,16 +3,18 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 import numpy as np
+from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 train_path=r'c:\Image Recognition tenserflow\train2'
-model_name = 'train2_MobileNetV2_hiden_fine.h5'
-save_model_name = 'train2_MobileNetV2_hiden_fine2.h5'
+model_name='test2_inception_v3.h5'
+model_save_name = "test2_inception_v3_fine.h5"
 
-image_size = 224 # All images will be resized to 160x160
-batch_size = 64
+image_size = 299 # All images will be resized to 
+batch_size = 32
 epochs = 20
 
 # Rescale all images by 1./255 and apply image augmentation
@@ -63,6 +65,24 @@ Let's instantiate an MobileNet V2 model pre-loaded with weights trained on Image
 #                                               include_top=False,
 #                                               weights='imagenet')
 
+#Save the TensorBoard logs. histogram_freq was 1 (gave errors) and now is 0. write_images was True (read that this is heavy) and now is False
+tb = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=False, write_images=False)
+
+fine_tuned_checkpoint_path = 'cp.fine_tuned.best.hdf5'
+
+#Save the model after every epoch.
+mc_fit = ModelCheckpoint(fine_tuned_checkpoint_path, 
+                         monitor='val_acc', 
+                         verbose=0, 
+                         save_best_only=True,
+                        save_weights_only=False, 
+                        mode='auto', 
+                        period=1)
+
+if os.path.exists(fine_tuned_checkpoint_path):
+    model.load_weights(fine_tuned_checkpoint_path)
+    print ("Checkpoint '" + fine_tuned_checkpoint_path + "' loaded.")
+
 
 """## Fine tuning
 In our feature extraction experiment, we were only training a few layers on top of an MobileNet V2 base model. The weights of the pre-trained network were **not** updated during training. One way to increase performance even further is to "fine-tune" the weights of the top layers of the pre-trained model alongside the training of the top-level classifier. The training process will force the weights to be tuned from generic features maps to features associated specifically to our dataset.
@@ -76,26 +96,39 @@ Additionally, the reasoning behind fine-tuning the top layers of the pre-trained
 All we need to do is unfreeze the `base_model`, and set the bottom layers be un-trainable. Then, recompile the model (necessary for these changes to take effect), and resume training.
 """
 
-model.layers[0].trainable = True
+#model.layers[0].trainable = True
 
-# Let's take a look to see how many layers are in the base model
-#print("Number of layers in the base model: ", len(base_model.layers))
+## Let's take a look to see how many layers are in the base model
+##print("Number of layers in the base model: ", len(base_model.layers))
 
-# Fine tune from this layer onwards
-fine_tune_at = 100
+## Fine tune from this layer onwards
+#fine_tune_at = 100
   
-# Freeze all the layers before the `fine_tune_at` layer
-for layer in model.layers[0].layers[:fine_tune_at]:
-  layer.trainable =  False
+## Freeze all the layers before the `fine_tune_at` layer
+#for layer in model.layers[0].layers[:fine_tune_at]:
+#  layer.trainable =  False
+
+# we chose to train the top 2 inception blocks, i.e. we will freeze
+# the first 249 layers and unfreeze the rest:
+# in other examples found it was 172 insted 249. 
+# I took 249 according to https://keras.io/applications/#inceptionv3
+for layer in model.layers[:249]:
+    layer.trainable = False
+for layer in model.layers[249:]:
+    layer.trainable = True
 
 """### Compile the model
 
 Compile the model using a much-lower training rate.
 """
 
-model.compile(optimizer = tf.keras.optimizers.RMSprop(lr=2e-5),
+#model.compile(optimizer = tf.keras.optimizers.RMSprop(lr=2e-5),
+#              loss='categorical_crossentropy',
+#              metrics=['accuracy'])
+
+model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.0001, momentum=0.9), 
               loss='categorical_crossentropy',
-              metrics=['accuracy'])
+             metrics=['accuracy'])
 
 model.summary()
 
@@ -114,10 +147,12 @@ history_fine = model.fit_generator(train_generator,
                                    epochs=epochs,
                                    workers=4,
                                    validation_data=validation_generator,
-                                   validation_steps=validation_steps)
+                                   validation_steps=validation_steps,
+                                   callbacks=[mc_fit, tb],
+                                   verbose=2)
 
 # save model and architecture to single file
-model.save(save_model_name)
+model.save(model_save_name)
 print("Saved model to disk")
 
 """### Learning curves

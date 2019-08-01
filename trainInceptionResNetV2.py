@@ -20,8 +20,9 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 train_path=r'C:\Image Recognition tenserflow\train2'
 model_name = "train2_InceptionResNetV2.h5"
-image_size = 224 # All images will be resized to 160x160
+image_size = 299 # The default input size for InceptionResNetV2 model is 299x299.
 batch_size = 64
+epochs = 10
 
 classes = os.listdir(train_path)
 num_classes = len(classes)
@@ -122,7 +123,6 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 10
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 

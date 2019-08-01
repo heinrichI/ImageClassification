@@ -18,33 +18,16 @@ from keras import backend as K
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def _process_pathnames(fname, label_path):
-  # We map this function onto each pathname pair  
-  img_str = tf.read_file(fname)
-  img = tf.image.decode_jpeg(img_str, channels=3)
-
-  label_img_str = tf.read_file(label_path)
-  # These are gif images so they return as (num_frames, h, w, c)
-  label_img = tf.image.decode_gif(label_img_str)[0]
-  # The label image should only have values of 1 or 0, indicating pixel wise
-  # object (car) or not (background). We take the first channel only. 
-  label_img = label_img[:, :, 0]
-  label_img = tf.expand_dims(label_img, axis=-1)
-  return img, label_img
-
-# Reads an image from a file, decodes it into a dense tensor, and resizes it
-# to a fixed shape.
-def _parse_function(filename, label):
-  image_string = tf.io.read_file(filename)
-  image_decoded = tf.image.decode_jpeg(image_string)
-  image_resized = tf.image.resize(image_decoded, [28, 28])
-  return image_resized, label
-
-
 train_path=r'C:\Image Recognition tenserflow\train2'
-classes = os.listdir(train_path)
-num_classes = len(classes)
-print(num_classes)
+model_name = "test2_inception_v3_299.h5"
+image_size = 299 # All images will be resized to 1
+batch_size = 64
+epochs = 10
+
+
+#classes = os.listdir(train_path)
+#num_classes = len(classes)
+#print(num_classes)
 
 """### Create Image Data Generator with Image Augmentation
 
@@ -55,8 +38,6 @@ To create the train generator, specify where the train dataset directory, image 
 The validation generator is created the same way.
 """
 
-image_size = 224 # All images will be resized to 160x160
-batch_size = 64
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -139,7 +120,6 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 10
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 
@@ -151,7 +131,7 @@ history = model.fit_generator(train_generator,
                               validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("test2_inception_v3.h5")
+model.save(model_name)
 print("Saved model to disk")
 
 """### Learning curves

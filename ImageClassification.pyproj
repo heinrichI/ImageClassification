@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>trainInceptionResNetV2.py</StartupFile>
+    <StartupFile>fine_tuning_InceptionV3_100.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="continue_training_MobileNetV2.py" />
+    <Compile Include="continue_training_MobileNetV2_binary.py" />
     <Compile Include="continue_training_NasNet.py" />
     <Compile Include="DataGenerator.py">
       <SubType>Code</SubType>
@@ -33,8 +34,12 @@
     <Compile Include="evaluate.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="fine_tuning_InceptionV3.py" />
+    <Compile Include="evaluate_binary.py" />
+    <Compile Include="fine_tuning_InceptionV3_100.py" />
+    <Compile Include="fine_tuning_InceptionResNetV2.py" />
+    <Compile Include="fine_tuning_InceptionV3_249.py" />
     <Compile Include="fine_tuning_MobileNetV2.py" />
+    <Compile Include="fine_tuning_MobileNetV2_binary.py" />
     <Compile Include="fine_tuning_NasNet.py" />
     <Compile Include="MySequence.py">
       <SubType>Code</SubType>
@@ -55,6 +60,7 @@
     <Compile Include="trainMobileNetV2.py" />
     <Compile Include="trainMobileNetV2_binary.py" />
     <Compile Include="trainNASNetLarge.py" />
+    <Compile Include="train_fine_MobileNetV2.py" />
     <Compile Include="volume.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

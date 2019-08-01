@@ -10,12 +10,17 @@ import matplotlib.pyplot as plt
  
 #tf.enable_eager_execution()
 
-train_path=r'c:\Image Recognition tenserflow\Animals_train'
-save_model_name = 'Animals_MobileNetV2.h5'
-label_path = "Animals_label.txt"
-
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+train_path=r'c:\Image Recognition tenserflow\Animals_train'
+save_model_name = 'train2_MobileNetV2_hiden1024.h5'
+label_path = "train2_label.txt"
+image_size = 224 # All images will be resized to 224x224
+batch_size = 64
+epochs = 20
+
+
 
 def _process_pathnames(fname, label_path):
   # We map this function onto each pathname pair  
@@ -53,8 +58,6 @@ To create the train generator, specify where the train dataset directory, image 
 The validation generator is created the same way.
 """
 
-image_size = 224 # All images will be resized to 224x224
-batch_size = 64
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -125,7 +128,8 @@ model = tf.keras.Sequential([
 	base_model,
 	keras.layers.GlobalAveragePooling2D(),
 #keras.layers.Dense(1, activation='sigmoid')
-	keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.relu),
+#keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.relu),
+	keras.layers.DenseDense(units=1024, activation=tf.nn.relu),
 	keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.softmax)
 ])
 
@@ -151,7 +155,6 @@ After training for 10 epochs, we are able to get ~94% accuracy.
 If you have more time, train it to convergence (50 epochs, ~96% accuracy)
 """
 
-epochs = 20
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 

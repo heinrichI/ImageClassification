@@ -1,0 +1,2 @@
+python fine_tuning_InceptionV3_249.py
+pause

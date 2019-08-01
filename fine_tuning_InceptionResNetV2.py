@@ -9,7 +9,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\SourcePython\train'
+train_path=r'c:\Image Recognition tenserflow\train2'
 
 image_size = 224 # All images will be resized to 160x160
 batch_size = 32

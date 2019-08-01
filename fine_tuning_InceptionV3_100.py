@@ -7,10 +7,13 @@ import numpy as np
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path='train'
+train_path=r'c:\Image Recognition tenserflow\train2'
+model_name='test2_inception_v3.h5'
+model_save_name = "test2_inception_v3_fine.h5"
 
-image_size = 160 # All images will be resized to 160x160
+image_size = 299 # All images will be resized to 299
 batch_size = 32
+epochs = 20
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
@@ -42,7 +45,7 @@ validation_generator = train_datagen.flow_from_directory(
                 subset='validation')
 
 
-model = tf.keras.models.load_model('image_classification_inception_v3.h5')
+model = tf.keras.models.load_model(model_name)
 
 
 """## Create the base model from the pre-trained convnets
@@ -103,7 +106,7 @@ len(model.trainable_variables)
 If you trained to convergence earlier, this will get you a few percent more accuracy.
 """
 
-epochs = 10
+
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 
@@ -115,7 +118,7 @@ history_fine = model.fit_generator(train_generator,
                                    validation_steps=validation_steps)
 
 # save model and architecture to single file
-model.save("image_classification_inception_v3_fine.h5")
+model.save(model_save_name)
 print("Saved model to disk")
 
 """### Learning curves

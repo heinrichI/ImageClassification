@@ -1,0 +1,2 @@
+python train_fine_MobileNetV2.py
+pause
