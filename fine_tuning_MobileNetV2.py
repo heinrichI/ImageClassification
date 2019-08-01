@@ -7,9 +7,9 @@ import numpy as np
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\train2'
-model_name = 'train2_MobileNetV2_continue.h5'
-save_model_name = 'train2_MobileNetV2_fine.h5'
+train_path=r'c:\Image Recognition tenserflow\Animals_train'
+model_name = 'Animals_MobileNetV2_continue2.h5'
+save_model_name = 'Animals_MobileNetV2_fine.h5'
 
 image_size = 224 # All images will be resized to 160x160
 batch_size = 64

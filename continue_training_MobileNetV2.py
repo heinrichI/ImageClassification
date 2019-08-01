@@ -7,10 +7,10 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\train2'
-model_name = 'train2_MobileNetV2_continue.h5'
-save_model_name = 'train2_MobileNetV2_continue2.h5'
-auto_save_model_name = 'train2_MobileNetV2_continue_auto.h5'
+train_path=r'c:\Image Recognition tenserflow\Animals_train'
+model_name = 'Animals_MobileNetV2.h5'
+save_model_name = 'Animals_MobileNetV2_continue2.h5'
+auto_save_model_name = 'Animals_MobileNetV2_continue_auto.h5'
 
 image_size = 224 # All images will be resized to 224x224
 batch_size = 64
@@ -73,7 +73,7 @@ history = model.fit_generator(train_generator,
                               workers=4,
                               validation_data=validation_generator,
                               validation_steps=validation_steps,
-							  callbacks=[mc_fit],
+							  #callbacks=[mc_fit],
 							  verbose=2)
 
 # save model and architecture to single file

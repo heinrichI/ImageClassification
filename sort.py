@@ -5,7 +5,8 @@ import numpy as np
 import glob
 #import pathlib
 
-
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 """As the model trains, the loss and accuracy metrics are displayed. This model reaches an accuracy of about 0.88 (or 88%) on the training data.
 
@@ -14,12 +15,12 @@ import glob
 Next, compare how the model performs on the test dataset:
 """
 
-image_size = 160 # All images will be resized to 160x160
-batch_size = 16
-label_name = "Test_labels.txt"
-model_name = 'Test.h5'
-sort_dir='Sort'
-confidence_threshold = 0.9999
+image_size = 224 # All images will be resized to 
+batch_size = 64
+label_name = "Animals_label.txt"
+model_name = 'Animals_MobileNetV2_fine.h5'
+sort_dir=r'c:\Image Recognition tenserflow\Animals_sort'
+confidence_threshold = 0.98
 
 #from SingleDirectoryIterator import SingleDirectoryIterator
 #from BSONIterator import BSONIterator

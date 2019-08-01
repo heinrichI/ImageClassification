@@ -1,0 +1,2 @@
+python trainInceptionResNetV2.py
+pause
