@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\Animals_train'
-save_model_name = 'Animals_MobileNetV2_hiden1024.h5'
-save_fine_model_name = 'Animals_MobileNetV2_hiden1024_fine.h5'
-label_path = "Animals_label.txt"
+train_path=r'c:\Image Recognition tenserflow\Tianna Gregory Instagram'
+save_model_name = 'TiannaGregoryInstagram_MobileNetV2_hiden1024.h5'
+save_fine_model_name = 'TiannaGregoryInstagram_MobileNetV2_hiden1024_fine.h5'
+label_path = "TiannaGregoryInstagram_label.txt"
 image_size = 224 # All images will be resized to 224x224
 batch_size = 64
 epochs = 20
@@ -51,7 +51,7 @@ train_generator = train_datagen.flow_from_directory(
                 train_path,  # Source directory for the training images
                 target_size=(image_size, image_size),
                 batch_size=batch_size,
-                class_mode='categorical',
+                class_mode='binary',
                 subset='training')
 
 
@@ -60,7 +60,7 @@ validation_generator = train_datagen.flow_from_directory(
                 train_path, # Source directory for the validation images
                 target_size=(image_size, image_size),
                 batch_size=batch_size,
-                class_mode='categorical',
+                class_mode='binary',
                 subset='validation')
 
 with open(label_path, "w") as txt_file:
@@ -102,10 +102,9 @@ Now let's add a few layers on top of the base model:
 model = tf.keras.Sequential([
 	base_model,
 	keras.layers.GlobalAveragePooling2D(),
-#keras.layers.Dense(1, activation='sigmoid')
 #keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.relu),
 	keras.layers.Dense(units=1024, activation=tf.nn.relu),
-	keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.softmax)
+	keras.layers.Dense(1, activation='sigmoid')
 ])
 
 """### Compile the model
@@ -114,7 +113,7 @@ You must compile the model before training it.
 """
 
 model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=0.0001),
-              loss='categorical_crossentropy',
+              loss='binary_crossentropy',
               metrics=['accuracy'])
 
 model.summary()
