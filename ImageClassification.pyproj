@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>fine_tuning_InceptionV3_100.py</StartupFile>
+    <StartupFile>sortArgument.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -13,7 +13,7 @@
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId />
-    <CommandLineArguments>-d "c:\Image Recognition tenserflow\train2" -m test2_inception_v3.h5 -s 224</CommandLineArguments>
+    <CommandLineArguments>-d "d:\Сеть\Wallpapers\Animals_sort" -m "h:\Image classification\Animals_MobileNetV2_hiden1024_fine.h5" -l "h:\Image classification\Animals_label.txt" -s 224 -b 64 -t 0.999</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />

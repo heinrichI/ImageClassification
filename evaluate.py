@@ -6,8 +6,8 @@ import argparse
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-#def usage():
-#	print('evaluate.py -dir <test dir> -m <model path> -s <image size>')
+def usage():
+	print('evaluate.py -dir <test dir> -m <model path> -s <image size>')
 
 def main(argv):
 	#test_dir = ''
