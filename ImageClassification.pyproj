@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>sortArgument.py</StartupFile>
+    <StartupFile>show_misclassified.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -42,6 +42,9 @@
     <Compile Include="fine_tuning_MobileNetV2_binary.py" />
     <Compile Include="fine_tuning_NasNet.py" />
     <Compile Include="MySequence.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="show_misclassified.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SingleDirectoryIterator.py">
