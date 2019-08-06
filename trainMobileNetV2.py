@@ -129,7 +129,7 @@ model = tf.keras.Sequential([
 	keras.layers.GlobalAveragePooling2D(),
 #keras.layers.Dense(1, activation='sigmoid')
 #keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.relu),
-	keras.layers.DenseDense(units=1024, activation=tf.nn.relu),
+	keras.layers.Dense(units=1024, activation=tf.nn.relu),
 	keras.layers.Dense(units=train_generator.num_classes, activation=tf.nn.softmax)
 ])
 
