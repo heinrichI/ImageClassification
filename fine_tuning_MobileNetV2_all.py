@@ -9,10 +9,10 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 train_path=r'c:\Image Recognition tenserflow\train2'
 model_name = 'train2_MobileNetV2_hiden1024_fine.h5'
-save_model_name = 'train2_MobileNetV2_hiden1024_fine_cont20.h5'
+save_model_name = 'train2_MobileNetV2_hiden1024_fine_all.h5'
 
-image_size = 224 # All images will be resized to 160x160
-batch_size = 64
+image_size = 224 # All images will be resized to 224x224
+batch_size = 8
 epochs = 20
 
 # Rescale all images by 1./255 and apply image augmentation
@@ -48,20 +48,6 @@ validation_generator = train_datagen.flow_from_directory(
 model = tf.keras.models.load_model(model_name)
 
 
-"""## Create the base model from the pre-trained convnets
-We will create the base model from the **MobileNet V2** model developed at Google, and pre-trained on the ImageNet dataset, a large dataset of 1.4M images and 1000 classes of web images. This is a powerful model. Let's see what the features that it has learned can do for our cat vs. dog problem.
-
-First, we need to pick which intermediate layer of MobileNet V2 we will use for feature extraction. A common practice is to use the output of the very last layer before the flatten operation, the so-called "bottleneck layer". The reasoning here is that the following fully-connected layers will be too specialized to the task the network was trained on, and thus the features learned by these layers won't be very useful for a new task. The bottleneck features, however, retain much generality.
-
-Let's instantiate an MobileNet V2 model pre-loaded with weights trained on ImageNet. By specifying the **include_top=False** argument, we load a network that doesn't include the classification layers at the top, which is ideal for feature extraction.
-"""
-
-#IMG_SHAPE = (image_size, image_size, 3)
-
-# Create the base model from the pre-trained model MobileNet V2
-#base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
-#                                               include_top=False,
-#                                               weights='imagenet')
 
 
 """## Fine tuning
@@ -77,16 +63,10 @@ All we need to do is unfreeze the `base_model`, and set the bottom layers be un-
 """
 
 model.layers[0].trainable = True
-
-# Let's take a look to see how many layers are in the base model
-#print("Number of layers in the base model: ", len(base_model.layers))
-
-# Fine tune from this layer onwards
-fine_tune_at = 100
   
 # Freeze all the layers before the `fine_tune_at` layer
-for layer in model.layers[0].layers[:fine_tune_at]:
-  layer.trainable =  False
+for layer in model.layers[0].layers:
+  layer.trainable =  True
 
 """### Compile the model
 
