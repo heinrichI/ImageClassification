@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>show_misclassified.py</StartupFile>
+    <StartupFile>copyMisclassified.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,6 +28,9 @@
     <Compile Include="continue_training_MobileNetV2.py" />
     <Compile Include="continue_training_MobileNetV2_binary.py" />
     <Compile Include="continue_training_NasNet.py" />
+    <Compile Include="copyMisclassified.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DataGenerator.py">
       <SubType>Code</SubType>
     </Compile>
