@@ -69,13 +69,13 @@ def main(argv):
 
 	train_generator = MySequence(args.d, batch_size=args.b, image_size=args.s)
 
-	if (all_image_paths.length == 0):
-		raise RuntimeError("not found image")
+	if (len(train_generator.all_image_paths) == 0):
+		raise RuntimeError("not found image in path " + args.d)
 	
 	# Predict from generator (returns probabilities)
 	pred=model.predict_generator(train_generator, 
 							 steps=len(train_generator), 
-							 verbose=0)
+							 verbose=1)
 
 	total = len(pred)
 	if (total == 0):
