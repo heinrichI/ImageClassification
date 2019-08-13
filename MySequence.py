@@ -62,16 +62,20 @@ class MySequence(tensorflow.keras.utils.Sequence):
 
         # Generate data
 		for i, path in enumerate(image_paths):
+			try:
 			# Store sample
 			#X[i,] = np.load('data/' + ID + '.npy')
-			image = tensorflow.keras.preprocessing.image.load_img(path, target_size=(self.image_size, self.image_size))
-			imageArray = tensorflow.keras.preprocessing.image.img_to_array(image)
-			X[i,] = imageArray / 255.0
+				with tensorflow.keras.preprocessing.image.load_img(path, target_size=(self.image_size, self.image_size)) as image:
+					imageArray = tensorflow.keras.preprocessing.image.img_to_array(image)
+				X[i,] = imageArray / 255.0
     #test_image = np.expand_dims(test_image, axis=0)
     #test_image.reshape(image_size, image_size, 3)
 
     #        # Store class
     #        y[i] = self.labels[ID]
-			y[i] = 0
+				y[i] = 0
+			except OSError:
+				print("OSError: in {}".format(path))
+				continue
 
 		return X, y[i]

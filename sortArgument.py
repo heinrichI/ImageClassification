@@ -69,12 +69,17 @@ def main(argv):
 
 	train_generator = MySequence(args.d, batch_size=args.b, image_size=args.s)
 
+	if (all_image_paths.length == 0):
+		raise RuntimeError("not found image")
+	
 	# Predict from generator (returns probabilities)
 	pred=model.predict_generator(train_generator, 
 							 steps=len(train_generator), 
-							 verbose=1)
+							 verbose=0)
 
 	total = len(pred)
+	if (total == 0):
+		raise RuntimeError("total = 0")
 	printProgressBar(0, total, prefix = '0/{0}'.format(total), suffix = 'Complete', length = 50)
 
 	for idx, prediction in enumerate(pred):
