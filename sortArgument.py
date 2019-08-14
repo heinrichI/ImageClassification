@@ -33,6 +33,16 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     if iteration == total: 
         print()
 
+#Перемещение файла
+def moveFile(prediction, labels, sort_dir, image_path):
+	predicted_class_indices = np.argmax(prediction)
+	class_name = labels[predicted_class_indices]
+	target_dir = os.path.join(sort_dir, class_name)
+	if not os.path.exists(target_dir):
+		os.mkdir(target_dir)
+	target_path = os.path.join(target_dir, os.path.basename(image_path))
+	os.rename(image_path, target_path)
+
 def main(argv):
 	if len(sys.argv) == 1:
 		print('sys.argv == 1')
@@ -83,19 +93,16 @@ def main(argv):
 	printProgressBar(0, total, prefix = '0/{0}'.format(total), suffix = 'Complete', length = 50)
 
 	for idx, prediction in enumerate(pred):
-		max_predict = np.amax(prediction)
-		if (max_predict > args.t):
-			predicted_class_indices = np.argmax(prediction)
-			class_name = labels[predicted_class_indices]
-			target_dir = os.path.join(args.d, class_name)
-			if not os.path.exists(target_dir):
-				os.mkdir(target_dir)
-			image_path = train_generator.all_image_paths[idx]
-			target_path = os.path.join(target_dir, os.path.basename(image_path))
-			os.rename(image_path, target_path)
+		if (args.t is not None):
+			max_predict = np.amax(prediction)
+			if (max_predict > args.t):
+				moveFile(prediction, labels, args.d, train_generator.all_image_paths[idx])
+			else:
+				print('confidence {} < confidence threshold {} for file {}'.format(max_predict, args.t, 
+																			 train_generator.all_image_paths[idx]))
 		else:
-			print('confidence {} < confidence threshold {} for file {}'.format(max_predict, args.t, 
-																		 train_generator.all_image_paths[idx]))
+			moveFile(prediction, labels, args.d, train_generator.all_image_paths[idx])
+
 		 # Update Progress Bar
 		printProgressBar(idx + 1, total, prefix = '{}/{}'.format(idx,total), suffix = 'Complete', length = 50)
 
