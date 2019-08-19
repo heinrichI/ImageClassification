@@ -4,6 +4,7 @@ from tensorflow import keras
 import numpy as np
 import sys
 import argparse
+import time
 from MySequence import MySequence
 
 from PIL import ImageFile
@@ -90,6 +91,9 @@ def main(argv):
 	total = len(pred)
 	if (total == 0):
 		raise RuntimeError("total = 0")
+		
+	time.sleep(1)
+		
 	printProgressBar(0, total, prefix = '0/{0}'.format(total), suffix = 'Complete', length = 50)
 
 	for idx, prediction in enumerate(pred):
