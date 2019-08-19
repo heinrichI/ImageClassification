@@ -42,7 +42,13 @@ def moveFile(prediction, labels, sort_dir, image_path):
 	if not os.path.exists(target_dir):
 		os.mkdir(target_dir)
 	target_path = os.path.join(target_dir, os.path.basename(image_path))
-	os.rename(image_path, target_path)
+			
+	try:
+		os.rename(image_path, target_path)
+	except PermissionError as exception_object:
+		print("Cannot move a file {}: {}".format(image_path, exception_object))
+		time.sleep(1)
+		os.rename(image_path, target_path)
 
 def main(argv):
 	if len(sys.argv) == 1:
@@ -91,9 +97,6 @@ def main(argv):
 	total = len(pred)
 	if (total == 0):
 		raise RuntimeError("total = 0")
-		
-	time.sleep(1)
-		
 	printProgressBar(0, total, prefix = '0/{0}'.format(total), suffix = 'Complete', length = 50)
 
 	for idx, prediction in enumerate(pred):
