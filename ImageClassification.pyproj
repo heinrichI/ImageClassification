@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8ed90ce7-1cad-407e-bed7-c344f52a96c6}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>copyMisclassified.py</StartupFile>
+    <StartupFile>sortArgument.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -13,7 +13,7 @@
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId />
-    <CommandLineArguments>-d "d:\Сеть\Wallpapers\Animals_sort" -m "h:\Image classification\Animals_MobileNetV2_hiden1024_fine.h5" -l "h:\Image classification\Animals_label.txt" -s 224 -b 64 -t 0.999</CommandLineArguments>
+    <CommandLineArguments>-d "d:\Борисов\Image Recognition tenserflow\1.33 4x3" -m "Wallpapers_MobileNetV2_hiden1024_fine.h5" -l "Wallpapers_label.txt" -r true -s 224 -b 16</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
@@ -44,7 +44,7 @@
     <Compile Include="fine_tuning_MobileNetV2.py" />
     <Compile Include="fine_tuning_MobileNetV2_binary.py" />
     <Compile Include="fine_tuning_NasNet.py" />
-    <Compile Include="MySequence.py">
+    <Compile Include="DirectorySearchSequence.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="show_misclassified.py">

@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import argparse
 import time
-from MySequence import MySequence
+from DirectorySearchSequence import DirectorySearchSequence
 
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -42,13 +42,21 @@ def moveFile(prediction, labels, sort_dir, image_path):
 	if not os.path.exists(target_dir):
 		os.mkdir(target_dir)
 	target_path = os.path.join(target_dir, os.path.basename(image_path))
-			
+	
+	#print('move {}'.format(image_path))
 	try:
 		os.rename(image_path, target_path)
 	except PermissionError as exception_object:
 		print("Cannot move a file {}: {}".format(image_path, exception_object))
-		time.sleep(1)
-		os.rename(image_path, target_path)
+		while True:
+			time.sleep(1)
+			try:
+				os.rename(image_path, target_path)
+			except Exception as exception_object2:
+				print("Cannot move a file {}: {}".format(image_path, exception_object2))
+				continue
+			break
+
 
 def main(argv):
 	if len(sys.argv) == 1:
@@ -63,6 +71,7 @@ def main(argv):
 	parser.add_argument("-b", type=int, help="batch_size")
 	parser.add_argument("-l", help="label name")
 	parser.add_argument("-t", type=float, help="confidence_threshold")
+	parser.add_argument("-r", type=bool, default=False, help="recursive subdirectory search")
 
 	args = parser.parse_args()
 	
@@ -72,6 +81,7 @@ def main(argv):
 	print('Batch size is ', args.b)
 	print('Label name is ', args.l)
 	print('Confidence thresholde is ', args.t)
+	print('Recursive subdirectory search is ', args.r)
 
 	
 	labels = []
@@ -84,7 +94,7 @@ def main(argv):
 	
 	model.summary()
 
-	train_generator = MySequence(args.d, batch_size=args.b, image_size=args.s)
+	train_generator = DirectorySearchSequence(args.d, batch_size=args.b, image_size=args.s, recursive=args.r)
 
 	if (len(train_generator.all_image_paths) == 0):
 		raise RuntimeError("not found image in path " + args.d)

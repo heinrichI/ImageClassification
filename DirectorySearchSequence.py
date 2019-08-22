@@ -4,15 +4,28 @@ import os
 import glob
 
 
-class MySequence(tensorflow.keras.utils.Sequence):
+class DirectorySearchSequence(tensorflow.keras.utils.Sequence):
 
-	def __init__(self, sort_dir, batch_size=32, image_size=224):
+	def __init__(self, sort_dir, batch_size=32, image_size=224, recursive=False):
 		'Initialization'
 		self.batch_size = batch_size
-		path = os.path.join(sort_dir, '*')
+		#path = os.path.join(sort_dir, '*')
 		#self.all_image_paths = glob.glob(path)
 		#self.all_image_paths = [f for f in os.listdir(sort_dir) if os.path.isfile(f)]
-		self.all_image_paths = [name for name in glob.glob(os.path.join(sort_dir,'*.*')) if os.path.isfile(name)]
+		#files = glob.glob(os.path.join(sort_dir,'*.*'), recursive=True)
+		#files2 =  glob.glob(os.path.join(sort_dir,'*.**'))
+		#files3 =  glob.glob(os.path.join(sort_dir,'*.**'), recursive=True)
+		#files4 =  glob.glob(os.path.join(sort_dir,'*.**'), recursive=False)
+		#files5 =  glob.glob(os.path.join(sort_dir,'**.*'))
+		#files6 =  glob.glob(os.path.join(sort_dir,'**.*'), recursive=True)
+		#files7 =  glob.glob(os.path.join(sort_dir,'**.*'), recursive=False)
+		#files5 =  glob.glob(os.path.join(sort_dir,'**','*.*'))
+		#files6 =  glob.glob(os.path.join(sort_dir,'**','**.*'), recursive=True)
+		#files7 =  glob.glob(os.path.join(sort_dir,'**','**.*'), recursive=False)
+		if (recursive):
+			self.all_image_paths = [name for name in glob.glob(os.path.join(sort_dir,'**','*.*'), recursive=recursive) if os.path.isfile(name)]
+		else:
+			self.all_image_paths = [name for name in glob.glob(os.path.join(sort_dir,'*.*'), recursive=recursive) if os.path.isfile(name)]
 		self.image_size = image_size
 		self.indexes = np.arange(len(self.all_image_paths))
 
@@ -27,7 +40,13 @@ class MySequence(tensorflow.keras.utils.Sequence):
 
 	def __len__(self):
 		'Denotes the number of batches per epoch'
-		return int(np.floor(len(self.all_image_paths) / self.batch_size))
+		total_samples = len(self.all_image_paths)
+		remainder = total_samples % self.batch_size
+		wholeBatches = int(np.floor(total_samples / self.batch_size))
+		if (remainder == 0):
+			return wholeBatches
+		else:
+			return wholeBatches + 1
 
 	def __getitem__(self, index):
 		"""'Gets batch at position `index`.'
@@ -54,11 +73,12 @@ class MySequence(tensorflow.keras.utils.Sequence):
 	def __data_generation(self, image_paths):
 		'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
 		# Initialization
-		X = np.empty((self.batch_size, 
+		currentBatchsize = len(image_paths)
+		X = np.empty((currentBatchsize, 
                       self.image_size, # dimension w.r.t. x
                       self.image_size, # dimension w.r.t. y
                       3)) # n_channels
-		y = np.empty((self.batch_size), dtype=int)
+		y = np.empty((currentBatchsize), dtype=int)
 
         # Generate data
 		for i, path in enumerate(image_paths):
