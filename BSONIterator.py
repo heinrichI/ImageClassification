@@ -18,7 +18,7 @@ class BSONIterator(Iterator):
         self.image_shape = self.target_size + (3,)
 
         print("Found %d images belonging to %d classes." % (self.samples, self.num_class))
-		
+
         super(BSONIterator, self).__init__(self.samples, batch_size, shuffle, seed)
         self.lock = lock
 

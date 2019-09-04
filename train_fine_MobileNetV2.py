@@ -13,14 +13,14 @@ import matplotlib.pyplot as plt
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-train_path=r'c:\Image Recognition tenserflow\Animals_train'
-save_model_name = 'Animals_MobileNetV2_hiden1024.h5'
-save_fine_model_name = 'Animals_MobileNetV2_hiden1024_fine.h5'
-label_path = "Animals_label.txt"
+train_path=r'c:\Image Recognition tenserflow\WallpapersTrain'
+save_model_name = 'Wallpapers_MobileNetV2_hiden1024.h5'
+save_fine_model_name = 'Wallpapers_MobileNetV2_hiden1024_fine.h5'
+label_path = "Wallpapers_label.txt"
 image_size = 224 # All images will be resized to 224x224
 batch_size = 64
-epochs = 20
-fine_epochs = 30
+epochs = 5
+fine_epochs = 4
 
 
 
@@ -243,29 +243,29 @@ If you train to convergence (`epochs=50`) the resulting graph should look like t
 ![After fine tuning the model nearly reaches 98% accuracy](./images/fine_tuning.png)
 """
 
-acc = history_fine.history['acc']
-val_acc = history_fine.history['val_acc']
+#acc = history_fine.history['acc']
+#val_acc = history_fine.history['val_acc']
 
-loss = history_fine.history['loss']
-val_loss = history_fine.history['val_loss']
+#loss = history_fine.history['loss']
+#val_loss = history_fine.history['val_loss']
 
-plt.figure(figsize=(8, 8))
-plt.subplot(2, 1, 1)
-plt.plot(acc, label='Training Accuracy')
-plt.plot(val_acc, label='Validation Accuracy')
-plt.ylim([0.9, 1])
-plt.plot([epochs-1,epochs-1], plt.ylim(), label='Start Fine Tuning')
-plt.legend(loc='lower right')
-plt.title('Training and Validation Accuracy')
+#plt.figure(figsize=(8, 8))
+#plt.subplot(2, 1, 1)
+#plt.plot(acc, label='Training Accuracy')
+#plt.plot(val_acc, label='Validation Accuracy')
+#plt.ylim([0.9, 1])
+#plt.plot([epochs-1,epochs-1], plt.ylim(), label='Start Fine Tuning')
+#plt.legend(loc='lower right')
+#plt.title('Training and Validation Accuracy')
 
-plt.subplot(2, 1, 2)
-plt.plot(loss, label='Training Loss')
-plt.plot(val_loss, label='Validation Loss')
-plt.ylim([0, 0.2])
-plt.plot([epochs-1,epochs-1], plt.ylim(), label='Start Fine Tuning')
-plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
-plt.show()
+#plt.subplot(2, 1, 2)
+#plt.plot(loss, label='Training Loss')
+#plt.plot(val_loss, label='Validation Loss')
+#plt.ylim([0, 0.2])
+#plt.plot([epochs-1,epochs-1], plt.ylim(), label='Start Fine Tuning')
+#plt.legend(loc='upper right')
+#plt.title('Training and Validation Loss')
+#plt.show()
 
 """# Key takeaways
 In summary here is what we covered in this tutorial on how to do transfer learning using a pre-trained model to improve accuracy:

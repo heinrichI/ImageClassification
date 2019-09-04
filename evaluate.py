@@ -34,7 +34,7 @@ def main(argv):
 	print('Testing directory is ', args.d)
 	print('Image size is ', args.s)
 	print('Batch size is ', args.b)
-   
+
    # returns a compiled model
 	# identical to the previous one
 	model = tf.keras.models.load_model(args.m)
