@@ -31,6 +31,9 @@
     <Compile Include="copyMisclassified.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="copyUnsure.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DataGenerator.py">
       <SubType>Code</SubType>
     </Compile>
