@@ -5,7 +5,8 @@ import numpy as np
 import sys
 import argparse
 import time
-from DirectorySearchSequence import DirectorySearchSequence
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import shutil
 
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -57,7 +58,6 @@ def main(argv):
 	print('Unsure directory is ', args.u)
 	print('Image size is ', args.s)
 	print('Batch size is ', args.b)
-	print('Label name is ', args.l)
 	print('Confidence thresholde is ', args.t)
 
 
@@ -76,24 +76,29 @@ def main(argv):
 	prediction = classifier.predict_generator(test_set)
 
 	prediction_classes = np.argmax(prediction, axis=1)
-	max_predict = np.amax(prediction)
+	max_predict = np.amax(prediction, axis=1)
 	#это list comprehension
 	mislabeled_index = [x for x in range(len(prediction_classes)) if prediction_classes[x] != test_set.classes[x]
-					 or max_predict < args.t]
+					 or max_predict[x] < args.t]
 
 	if not os.path.exists(args.u):
 		os.mkdir(args.u)
 	
+	total = len(mislabeled_index)
+	if (total == 0):
+		raise RuntimeError("total = 0")
 	printProgressBar(0, total, prefix = '0/{0}'.format(total), suffix = 'Complete', length = 50)
 
 	for idx in mislabeled_index:
-		predicted_class_indices = prediction_classes[idx]
-		class_name = list_of_classes[predicted_class_indices]
+		#predicted_class_indice = prediction_classes[idx]
+		#class_name = list_of_classes[predicted_class_indice]
+		class_indice = test_set.classes[idx]
+		class_name = list_of_classes[class_indice]
 		target_dir = os.path.join(args.u, class_name)
 		if not os.path.exists(target_dir):
 			os.mkdir(target_dir)
 		image_path = test_set.filenames[idx]
-		image_path2 = os.path.join(test_path, image_path)
+		image_path2 = os.path.join(args.d, image_path)
 		target_path = os.path.join(target_dir, os.path.basename(image_path))
 		shutil.copyfile(image_path2, target_path)
 
