@@ -5,6 +5,7 @@ import numpy as np
 import sys
 import argparse
 import time
+import Levenshtein
 from DirectorySearchSequence import DirectorySearchSequence
 
 from PIL import ImageFile
@@ -103,6 +104,16 @@ def main(argv):
 	pred=model.predict_generator(train_generator, 
 							 steps=len(train_generator), 
 							 verbose=1)
+
+	сортируем по группам
+	grs = list() # groups of names with distance > 
+	for idx, prediction in pred:
+		if all(Levenshtein.distance(os.path.basename(train_generator.all_image_paths[idx]), w) < 5 for w in prediction):
+				g.append(name)
+				break
+		else:
+			grs.append([name, ])
+
 
 	total = len(pred)
 	if (total == 0):
