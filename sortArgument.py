@@ -105,6 +105,14 @@ def main(argv):
 							 steps=len(train_generator), 
 							 verbose=1)
 
+    templates = ["{number}_*.jpg", "other template"]
+    
+    allFiles
+    foreach(file in pred)
+      if templates.Any(allFiles)
+            groupedFiles.Add
+      
+
 	сортируем по группам
 	grs = list() # groups of names with distance > 
 	for idx, prediction in pred:
