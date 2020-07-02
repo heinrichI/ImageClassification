@@ -105,6 +105,9 @@ def main(argv):
 							 steps=len(train_generator), 
 							 verbose=1)
 
+	https://www.w3schools.com/python/ref_string_split.asp
+	https://stackoverflow.com/questions/4289331/how-to-extract-numbers-from-a-string-in-python
+	https://stackoverflow.com/questions/20477716/python-test-if-string-matches-a-template-value
     templates = ["{number}_*.jpg", "other template"]
     
     allFiles
