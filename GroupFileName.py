@@ -52,9 +52,9 @@ class Template(MatchClass):
     def match(self, listOfStrings):
         group = [item for item in listOfStrings if self.regexe.match(item)]
         if not group:
-            [item for item in listOfStrings if item not in group]
-        else:
             return listOfStrings
+        else:
+            return [item for item in listOfStrings if item not in group] 
     
 assert issubclass(Template, MatchClass)
 #assert ininstance(Template(), MatchClass)
@@ -65,7 +65,15 @@ class LevenshteinMatch(MatchClass):
         self.group = list() 
 
     def match(self, listOfStrings):
-        group = [item for item in listOfStrings if Levenshtein.distance(item, w) < self.__distance]
+        #for name in listOfStrings:
+        #    for g in self.group:
+        #        if all(Levenshtein.distance(name, w) < 5 for w in g):
+        #            g.append(name)
+        #            break
+        #    else:
+        #        group.append([name, ])
+
+        group = [item for item in listOfStrings if Levenshtein.distance(item, w) < self.__distance for w in self.group]
         if not self.group:
             [item for item in listOfStrings if item not in group]
         else:
